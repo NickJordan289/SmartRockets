@@ -6,3 +6,6 @@ https://github.com/CodingTrain/website/tree/9f0f94dd0495840ab037ac172c4575dba9da
 
 ### SFML Libraries and DLLs required
 https://www.sfml-dev.org/
+
+### Build with DLL's
+https://github.com/NickJordan289/SmartRockets/releases/tag/1.0
