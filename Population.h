@@ -77,9 +77,9 @@ public:
 	void selection() {
 		std::vector<std::shared_ptr<Rocket>> newRockets;
 		for (int i = 0; i < rockets.size(); i++) {
-			int randomIndex = rNum(matingPool.size());
+			int randomIndex = rNum(matingPool.size()-1);
 			DNA parentA = matingPool[randomIndex]->dna;
-			randomIndex = rNum(matingPool.size());
+			randomIndex = rNum(matingPool.size()-1);
 			DNA parentB = matingPool[randomIndex]->dna;
 			DNA child = parentA.crossover(parentB);
 

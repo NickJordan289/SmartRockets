@@ -29,8 +29,10 @@ std::string GetEnvironmentBit() {
 	return ENVIRONMENTBIT;
 }
 
+// inclusive min, inclusive max
 template <typename T>
 T rNum(T Min, T Max) { return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min; }
+// inclusive max
 template <typename T>
 T rNum(T Max) { return T((float(rand()) / float(RAND_MAX)) * (Max - 0)) + 0; }
 
