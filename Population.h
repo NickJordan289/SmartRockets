@@ -6,14 +6,15 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <memory>
 #include "Rocket.h"
 #include "ExtraFuncs.h"
 
 class Population {
 public:
 
-	std::vector<Rocket*> rockets;
-	std::vector<Rocket*> matingPool;
+	std::vector<std::shared_ptr<Rocket>> rockets;
+	std::vector<std::shared_ptr<Rocket>> matingPool;
 	int popSize;
 	int& countRef;
 	sf::Vector2f target;
@@ -34,18 +35,14 @@ public:
 
 		for (int i = 0; i < popSize; i++)
 		{
-			rockets.push_back(new Rocket(lifespan, mutationChance, rWind, countRef));
+			rockets.push_back(std::make_unique<Rocket>(lifespan, mutationChance, rWind, countRef));
 		}
 	}
 
-	~Population() {
-		//free_pointer_vector_memory(rockets);
-	}
-
-	std::tuple<float, Rocket*> evaluate() {
+	std::tuple<float, std::shared_ptr<Rocket>> naturalSelection() {
 		float highestFitness = 0;
-		Rocket* highestRocket = nullptr;
-		for (Rocket* r : rockets) {
+		std::shared_ptr<Rocket> highestRocket = nullptr;
+		for (std::shared_ptr<Rocket> r : rockets) {
 			r->calcFitness(target);
 			if (r->fitness > highestFitness) {
 				highestFitness = r->fitness;
@@ -54,12 +51,12 @@ public:
 		}
 
 		// normalizes fitness
-		for (Rocket* r : rockets) {
+		for (std::shared_ptr<Rocket> r : rockets) {
 			r->fitness /= highestFitness;
 		}
 
 		matingPool.clear();
-		for (Rocket* r : rockets) {
+		for (std::shared_ptr<Rocket> r : rockets) {
 			int n = r->fitness * 100;
 			for (int i = 0; i < n; i++) {
 				matingPool.push_back(r);
@@ -78,7 +75,7 @@ public:
 	}
 
 	void selection() {
-		std::vector<Rocket*> newRockets;
+		std::vector<std::shared_ptr<Rocket>> newRockets;
 		for (int i = 0; i < rockets.size(); i++) {
 			int randomIndex = rNum(matingPool.size());
 			DNA parentA = matingPool[randomIndex]->dna;
@@ -88,20 +85,20 @@ public:
 
 			child.mutation();
 
-			newRockets.push_back(new Rocket(child, rWindRef, countRef));
+			newRockets.push_back(std::make_unique<Rocket>(child, rWindRef, countRef));
 		}
 
 		rockets = newRockets;
 	}
 
 	void update(float dt) {
-		for (Rocket* r : rockets) {
+		for (std::shared_ptr<Rocket> r : rockets) {
 			r->update(target, obstacle, dt);
 		}
 	}
 
 	void draw() {
-		for (Rocket* r : rockets) {
+		for (std::shared_ptr<Rocket> r : rockets) {
 			r->draw();
 		}
 	}

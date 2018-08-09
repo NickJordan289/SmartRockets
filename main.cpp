@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "Population.h"
 #include "Rocket.h"
@@ -14,7 +15,7 @@ int main() {
 	const unsigned int SCREEN_WIDTH = 800;
 	const unsigned int SCREEN_HEIGHT = 600;
 
-	const unsigned int FPS = 60; //The desired FPS. (The number of updates each second) or 0 for uncapped.
+	const unsigned int FPS = 0; //The desired FPS. (The number of updates each second) or 0 for uncapped.
 	float timescale = 1.f;
 
 	srand(static_cast<unsigned int>(time(NULL)));
@@ -22,7 +23,7 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 16;
 
-	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), ("Neural Network Diagram"), sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), ("Smart Rockets Genetic Algorithm"), sf::Style::Default, settings);
 	window.setFramerateLimit(FPS);
 
 	sf::Color clearColour = sf::Color(128, 128, 128);
@@ -38,7 +39,7 @@ int main() {
 	obstacle.setOutlineColor(sf::Color::Black);
 	obstacle.setOutlineThickness(-1.f);
 
-	int generations = 1; // generation counter
+	int generations = 0; // generation counter
 	int lifeCounter = 0; // frame counter
 	
 	// controls
@@ -107,7 +108,7 @@ int main() {
 
 			lifeCounter++;
 			if (lifeCounter == lifespan) {
-				std::tuple<float, Rocket*> bestRocket = pop.evaluate(); // evaluates and retrieves best rocket
+				std::tuple<float, std::shared_ptr<Rocket>> bestRocket = pop.naturalSelection(); // evaluates and retrieves best rocket
 				
 				if (std::get<1>(bestRocket)->completed) {
 					std::cout << "Fastest rocket: " << std::get<1>(bestRocket)->completionTime << std::endl;
